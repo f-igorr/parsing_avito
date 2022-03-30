@@ -1,0 +1,14 @@
+
+conda create -n avito 
+
+conda activate avito
+
+conda install python requests lxml beautifulsoup4
+
+=================
+!!!!!!!!!
+
+vs code выдает ошибки при импорте некоторых модулей.
+решение:
+    после первого запуска скрипта (моего файла) после получения ошибки по импорту надо в терминале vs code выйти из всех вирт окружений (conda deactivate).
+    после этого можно запускать скрипт. 
