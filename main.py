@@ -27,7 +27,7 @@ HEADERS = [
     }
     ]
 
-URL_WO_PAGE = 'https://www.avito.ru/krasnodar/doma_dachi_kottedzhi/sdam/na_dlitelnyy_srok-ASgBAgICAkSUA9IQoAjIVQ?cd=1&f=ASgBAQECAkSUA9IQoAjIVQFA2gg01FnSWdZZAkXCExh7ImZyb20iOm51bGwsInRvIjoxNDY3NH3GmgwZeyJmcm9tIjoxNTAwMCwidG8iOjE1MDAwfQ&s=1'
+URL_WO_PAGE = 'https://www.avito.ru/krasnodar/doma_dachi_kottedzhi/sdam/na_dlitelnyy_srok-ASgBAgICAkSUA9IQoAjIVQ?cd=1&f=ASgBAQECAkSUA9IQoAjIVQFA2gg01FnSWdZZAkXCExh7ImZyb20iOm51bGwsInRvIjoxNDY3Mn3GmgwVeyJmcm9tIjowLCJ0byI6MTYwMDB9'
 
 LOCATION_FILTER = '/krasnodar/'
 PREFIX = 'https://www.avito.ru'
@@ -50,7 +50,7 @@ def request_with_check_200(url, dict_sleep, text):
     status_200 = False
     count = 1 # счетчик попыток
     while not status_200: # пока status_200 = False посылаем запросы
-        num_random_header = 0 #random.randint(0,len(HEADERS)-1) # рандомный индекс для списка хедеров
+        num_random_header = random.randint(0,len(HEADERS)-1) # рандомный индекс для списка хедеров
         rand_header = HEADERS[num_random_header]
         response = requests.get(url=url, headers=rand_header, timeout= TIMEOUT)
         if response.status_code == 200:
@@ -61,11 +61,10 @@ def request_with_check_200(url, dict_sleep, text):
             print(f'{text}. попытка {count} BAD')
             time.sleep(random.gauss(mu=dict_sleep['mu'] * count, sigma=dict_sleep['sigma']))
             count += 1
-        if count > 5:
+        if count > 2:
             break
     
     return src, rand_header
-
 
 
 def find_last_page(url, dict_sleep):
@@ -122,7 +121,7 @@ def collect_all_data(hrefs, dict_sleep):
 
         #flag_not_found = True
         count = 1
-        while count < 5: #flag_not_found == True:
+        while count < 3: #flag_not_found == True:
 
             try:
                 title       = soup.find('span', class_ = re.compile('title-info-title-text')).text.strip()
@@ -143,9 +142,9 @@ def collect_all_data(hrefs, dict_sleep):
                 animals     = soup.find('span', text = re.compile('Можно с животными')).next_sibling.strip()
             except Exception:
                 animals = 'not found'  
-                with open(file='soup.txt', mode='w') as file:
+                with open(file=f'soup_{i}.txt', mode='w') as file:
                     file.write(soup.text)
-                    raise
+                    #raise
 
             try:    
                 address     = soup.find('span', class_ = re.compile('item-address')).text.strip()
@@ -176,7 +175,7 @@ def collect_all_data(hrefs, dict_sleep):
             dict_data['price']       = price
             dict_data['zalog']       = zalog
             dict_data['animals']     = animals
-            dict_data['condition']   = 'да' if re.findall(r'[Кк]ондиционер', description + technics) else 'нет'
+            dict_data['condition']   = 'да' if re.findall(r'[Кк]ондиционер|[Сс]плит', description + technics) else 'нет'
             dict_data['seller']      = seller
             dict_data['date']        = date
             dict_data['address']     = address

@@ -1,18 +1,9 @@
-import csv
+import re
 
-#headers = ['1','2']
+str = 'привет вася петя маша Петя Вася'
 
 
-res = [
-    {'1': '11', '2': '22'},
-    {'1': '33', '2': '44'}
-]
+res = re.findall(r'[Вв]ася|[Пп]етя', str)
 
-headers = res[0].keys()
+print(res)
 
-with open('eggs.csv', 'w', newline='') as csvfile:
-    riter = csv.writer(csvfile, delimiter=';')
-    riter.writerow(headers)
-    for r in res:
-        x = r.values()
-        riter.writerow(x)
